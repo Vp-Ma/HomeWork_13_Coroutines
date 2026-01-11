@@ -25,6 +25,8 @@ class TimerFragment : Fragment() {
         binding.time.text = newValue.toDisplayString()
     }
 
+    private var timerTask: Job? = null
+
     private var started by Delegates.observable(false) { _, _, newValue ->
         setButtonsState(newValue)
         if (newValue) {
@@ -75,11 +77,16 @@ class TimerFragment : Fragment() {
     }
 
     private fun startTimer() {
-        // TODO: Start timer
+        timerTask = viewLifecycleOwner.lifecycleScope.launch {
+            while (isActive) {
+                delay(10)
+                time += 10.milliseconds
+            }
+        }
     }
 
     private fun stopTimer() {
-        // TODO: Stop timer
+        timerTask?.cancel()
     }
 
     override fun onDestroyView() {
